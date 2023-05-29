@@ -1,0 +1,51 @@
+site_name: CIIRC Cluster (CIIRCluster) Documentation
+
+#theme: readthedocs
+#theme: mkdocs
+theme: 'material'
+
+
+# Repository
+repo_name: markdown github
+repo_url: https://github.com/krepsjan/markdown/
+
+
+# Copyright
+copyright: Copyright (c) 
+
+nav:
+  - Home: index.md
+  - Cluster:
+    - Basic operations: general/disk_usage.md
+    - Job Arrays: slurm/job_arrays.md
+
+
+# nasledujici rozsireni pro markdown se mohou hodit pro zapis zdrojaku a podobne. 
+
+# extra:
+#   repo_icon: gitlab
+#   palette:
+#     primary: 'grey'
+#     accent: 'yellow'
+#   font:
+#     text: 'Ubuntu'
+#     code: 'Ubuntu Mono'
+#   i18n:
+#     prev: 'Previous'
+#     next: 'Next'
+
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - pymdownx.superfences
+  # - pymdownx.arithmatex:
+  # - markdown.extensions.toc(permalink=true):
+  #     slugify: !!python/name:pymdownx.slugs.uslugify
+  # - pymdownx.snippets:
+  #     base_path: docs.it4i/snippets
+
+# google_analytics:
+#   - 'UA-90498826-1'
+#   - 'auto'
+    
