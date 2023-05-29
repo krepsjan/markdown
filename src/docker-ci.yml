@@ -1,0 +1,65 @@
+# Pouziva variables:
+#    STAGING_PRIVATE_KEY
+#    SSH_KNOWN_HOSTS
+build:
+  # image mkdocs-material nema shell, takze nelze pouzit nejaky parametr pro entrypoint
+  # Defaultni entrypoint spousti lokalni server, proto ho tady prepiseme a misto shellu spustime rovnou prikaz pro 
+  # buildnuti dokumentace. Bez toho prepsaneho/prazdneho entrypointu by to skoncilo chybou
+  # Error: No such command 'sh'.
+  image: 
+    name: squidfunk/mkdocs-material
+    entrypoint: [""]
+  script: mkdocs build
+  
+  artifacts:
+    paths:
+      - site/*
+
+
+deploy:
+  # Problem,
+  # v image pro squidfunk/mkdocs-material neni nic jako scp, neni tam ani apt-get
+  # tzn. bud 
+  #   1) mohu si postavit novy kontejner, ktery to v sobe vsechno ma, na zaklade toho kontejneru mkdocs-material
+  #   2) nebo na deploy pouzit jiny kontejner. 
+  # Moznost 2) je urcite jednodussi.
+  # Priklad:
+  # https://docs.gitlab.com/ee/ci/examples/deployment/composer-npm-deploy.html
+  stage: deploy
+  image: jenkins/ssh-agent
+  # https://plugins.jenkins.io/ssh-slaves/
+  # pokud chci nakopirovat soubory pres scp, potrebuju credentials. 
+  # https://docs.gitlab.com/ee/ci/ssh_keys/
+   
+  before_script:    
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)    
+    # Nahrat private ssh key (bez hesla) z Gitlab variable
+    # bud takhle
+    - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # nebo takhle        
+    #- ssh-add <(echo "$STAGING_PRIVATE_KEY")
+    # Protoze klic nema heslo, je urcen jen pro uzivatele s pravy na /var/www
+    # A pro jistotu se pojistit protim MIM utokum. Promenna SSH_KNOWN_HOSTS musi byt nastavena    
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - cat ~/.ssh/known_hosts
+    # pokud bychom nechteli explicitne vyjmenovavat known hosts, muze se
+    # bud kontrola vypnout takto:
+    #- echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
+    # nebo udelat ssh-keyscan v ramci before_scriptu, ale pak to trochu pozbyva vyznam
+    # a je to ekvivalentni tomu vypnuti. 
+
+
+  script:
+    - ssh -p22 docupload@cluster.ciirc.cvut.cz "mkdir /var/www/_tmp"
+    - scp -P22 -r site/* docupload@cluster.ciirc.cvut.cz:/var/www/_tmp
+    - ssh -p22 docupload@cluster.ciirc.cvut.cz "mv /var/www/html /var/www/html_previous && mv /var/www/_tmp /var/www/html "
+    - ssh -p22 docupload@cluster.ciirc.cvut.cz "rm -R /var/www/html_previous"
+  environment: production
+    
+  
+
+
+    
+   
