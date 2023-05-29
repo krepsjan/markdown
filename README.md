@@ -4,7 +4,7 @@
 - https://hub.docker.com/r/squidfunk/mkdocs-material
 - https://docs.docker.com/engine/reference/builder/#run
 - https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#overriding-the-entrypoint-of-an-image
-- https://phoenixnap.com/kb/docker-run-override-entrypoint
+
 ## Using MkDocs
 
 This documentation is written in Markdown, using MkDocs system with A Material Design theme. 
