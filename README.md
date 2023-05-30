@@ -4,6 +4,7 @@
 - https://hub.docker.com/r/squidfunk/mkdocs-material
 - https://docs.docker.com/engine/reference/builder/#run
 - https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#overriding-the-entrypoint-of-an-image
+- https://pandoc.org/
 
 ## Using MkDocs
 
